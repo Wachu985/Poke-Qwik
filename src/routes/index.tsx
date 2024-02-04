@@ -1,5 +1,5 @@
 import { component$, useSignal, $ } from '@builder.io/qwik';
-import type { DocumentHead } from "@builder.io/qwik-city";
+import { useNavigate, type DocumentHead } from "@builder.io/qwik-city";
 import { PokemonImage } from '~/components/pokemons/pokemon-image';
 
 export default component$(() => {
@@ -7,11 +7,16 @@ export default component$(() => {
   const pokemonId = useSignal<number>(1); //primitivos , booleans, strings, numbers
   const showBackImage = useSignal<boolean>(false)
   const showPokemon = useSignal<boolean>(true);
+  const nav = useNavigate();
 
   const changePokemonId = $((value: number) => {
     if ((pokemonId.value + value) <= 0) return;
     pokemonId.value += value;
   })
+
+  const goToPokemon = $(() => {
+    nav(`/pokemon/${pokemonId.value}`)
+  });
 
 
   return (
@@ -20,8 +25,10 @@ export default component$(() => {
       <span class="text-2xl">Buscador Simple</span>
 
       <span class="text-9xl">{pokemonId.value}</span>
+      <div onClick$={() => goToPokemon()}>
+        <PokemonImage id={pokemonId.value} backImage={showBackImage.value} isVisible={showPokemon.value} />
+      </div>
 
-      <PokemonImage id={pokemonId.value} backImage={showBackImage.value} isVisible={showPokemon.value} />
 
       <div class="mr-2">
         <button onClick$={() => changePokemonId(-1)} class="btn btn-primary mr-2">Anterior</button>
