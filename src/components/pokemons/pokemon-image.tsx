@@ -8,7 +8,7 @@ interface Props {
 }
 
 
-export const PokemonImage = component$(({ id, size = 200, backImage = false, isVisible = true }: Props) => {
+export const PokemonImage = component$(({ id, size = 200, backImage = false, isVisible = false }: Props) => {
 
     const imageLoaded = useSignal<boolean>(false);
     useTask$(({ track }) => {
