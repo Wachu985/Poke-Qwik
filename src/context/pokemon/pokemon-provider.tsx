@@ -11,7 +11,7 @@ export const PokemonProvider = component$(() => {
         showPokemon: false
     });
     const pokemonListState = useStore<PokemonListState>({
-        currentPage: 1,
+        currentPage: 0,
         isLoading: false,
         completeApi: false,
         pokemons: [],
