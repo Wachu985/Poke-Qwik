@@ -32,7 +32,6 @@ export const PokemonImage = component$(({ id, size = 200, backImage = false, isV
                 style={{ width: `${size}px` }}
                 onLoad$={() => {
                     imageLoaded.value = true;
-                    console.log("Cargo")
                 }}
                 class={{
                     "hidden": !imageLoaded.value,

@@ -1,6 +1,8 @@
-import { component$, useComputed$ } from '@builder.io/qwik';
+import { $, component$, useComputed$, useSignal, useStore, useTask$ } from '@builder.io/qwik';
 import { Link, routeLoader$, useLocation, type DocumentHead } from '@builder.io/qwik-city';
 import { PokemonImage } from '~/components/pokemons/pokemon-image';
+import { Modal, TextLoader } from '~/components/shared';
+import { getFunFactAboutPokemon } from '~/helpers/get-gemini-ia-response';
 import { getSmallPokemons } from '~/helpers/get-small-pokemons';
 import type { SmallPokemon } from '~/interfaces';
 
@@ -19,7 +21,14 @@ export const usePokemonList = routeLoader$<SmallPokemon[]>(async ({ query, pathn
 export default component$(() => {
     const pokemonResponse = usePokemonList();
     const location = useLocation();
+    const modalVisible = useSignal<boolean>(false);
 
+
+    const modalPokemon = useStore({
+        id: 0,
+        name: '',
+        geminiResponse: ''
+    });
 
     const currentOffset = useComputed$<number>(() => {
         // const offsetString = url.searchParams.get('offset');
@@ -29,6 +38,25 @@ export default component$(() => {
         if (offset < 0) return 0
         return offset
     });
+
+    // TODO: Modal Functions
+    const showModal = $((id: number, name: string) => {
+        modalPokemon.id = id;
+        modalPokemon.name = name;
+        modalVisible.value = true
+    })
+    const closeModal = $(() => {
+        modalVisible.value = false
+    })
+
+    useTask$(({ track }) => {
+        track(() => modalPokemon.name)
+        modalPokemon.geminiResponse = ''
+        if (modalPokemon.name.length > 0) {
+            getFunFactAboutPokemon(modalPokemon.name).then(resp => modalPokemon.geminiResponse = resp)
+        }
+    });
+
 
 
     return (
@@ -47,7 +75,7 @@ export default component$(() => {
                 {
                     pokemonResponse.value.map(pokemon =>
                     (
-                        <div key={pokemon.name} class="m-5 flex flex-col justify-center items-center">
+                        <div onClick$={() => showModal(pokemon.id, pokemon.name)} key={pokemon.name} class="m-5 flex flex-col justify-center items-center">
                             <PokemonImage id={pokemon.id} />
                             <span class="capitalize">{pokemon.name}</span>
                         </div>
@@ -55,6 +83,19 @@ export default component$(() => {
                     )
                 }
             </div>
+
+            <Modal showModal={modalVisible.value} closeCallback={closeModal} >
+                <div q:slot='title'>{modalPokemon.name}</div>
+                <div q:slot='content' class='flex flex-col justify-center items-center'>
+                    <PokemonImage id={modalPokemon.id} />
+
+                    <span>{
+                        modalPokemon.geminiResponse === '' ?
+                            <TextLoader /> :
+                            modalPokemon.geminiResponse
+                    }</span>
+                </div>
+            </Modal>
         </>
     )
 });

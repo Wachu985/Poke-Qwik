@@ -44,6 +44,7 @@
     "vite-tsconfig-paths": "^4.2.1"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.2.1",
     "sharp": "^0.33.2"
   }
 }
