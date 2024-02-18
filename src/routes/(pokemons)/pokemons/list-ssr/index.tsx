@@ -6,10 +6,10 @@ import { getFunFactAboutPokemon } from '~/helpers/get-gemini-ia-response';
 import { getSmallPokemons } from '~/helpers/get-small-pokemons';
 import type { SmallPokemon } from '~/interfaces';
 
-export const usePokemonList = routeLoader$<SmallPokemon[]>(async ({ query, pathname, redirect }) => {
+export const usePokemonList = routeLoader$<SmallPokemon[]>(async ({ query, redirect, url }) => {
     const offset = Number(query.get('offset') || "0")
-    if (isNaN(offset)) throw redirect(301, pathname)
-    if (offset < 0) throw redirect(301, pathname)
+    if (offset < 0) throw redirect(308, new URL('/pokemons/list-ssr/', url).toString())
+    if (isNaN(offset)) throw redirect(308, new URL('/pokemons/list-ssr/', url).toString())
     try {
         return await getSmallPokemons(offset)
     } catch {
