@@ -1,5 +1,5 @@
-import { component$, useComputed$, $ } from '@builder.io/qwik';
-import { Link, routeLoader$, useLocation, useNavigate, type DocumentHead } from '@builder.io/qwik-city';
+import { component$, useComputed$ } from '@builder.io/qwik';
+import { Link, routeLoader$, useLocation, type DocumentHead } from '@builder.io/qwik-city';
 import { PokemonImage } from '~/components/pokemons/pokemon-image';
 import { getSmallPokemons } from '~/helpers/get-small-pokemons';
 import type { SmallPokemon } from '~/interfaces';
@@ -19,7 +19,7 @@ export const usePokemonList = routeLoader$<SmallPokemon[]>(async ({ query, pathn
 export default component$(() => {
     const pokemonResponse = usePokemonList();
     const location = useLocation();
-    const nav = useNavigate();
+
 
     const currentOffset = useComputed$<number>(() => {
         // const offsetString = url.searchParams.get('offset');
@@ -30,9 +30,6 @@ export default component$(() => {
         return offset
     });
 
-    const goToPokemon = $((id: number) => {
-        nav(`/pokemon/${id}`)
-    })
 
     return (
         <>
@@ -50,7 +47,7 @@ export default component$(() => {
                 {
                     pokemonResponse.value.map(pokemon =>
                     (
-                        <div onClick$={() => goToPokemon(pokemon.id)} key={pokemon.name} class="m-5 flex flex-col justify-center items-center">
+                        <div key={pokemon.name} class="m-5 flex flex-col justify-center items-center">
                             <PokemonImage id={pokemon.id} />
                             <span class="capitalize">{pokemon.name}</span>
                         </div>
