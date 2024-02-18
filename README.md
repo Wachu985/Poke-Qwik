@@ -12,3 +12,8 @@
 
 - Renombrar el archivo **.env.template** a **.env**
 - Cambiar las variables de entorno
+
+## Gemini IA
+
+- Pueden generar el API Key aquí:
+  - [Gemini IA Developers](https://aistudio.google.com/app/apikey)
