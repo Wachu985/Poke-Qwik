@@ -1,25 +1,30 @@
-import { $, component$, useOnDocument, useStore, useTask$, } from '@builder.io/qwik';
-import { type DocumentHead } from '@builder.io/qwik-city';
+import { $, component$, useContext, useOnDocument, useTask$, } from '@builder.io/qwik';
+import { useNavigate, type DocumentHead } from '@builder.io/qwik-city';
 import { PokemonImage } from '~/components/pokemons/pokemon-image';
+import { PokemonListContext } from '~/context';
 import { getSmallPokemons } from '~/helpers/get-small-pokemons';
-import type { SmallPokemon } from '~/interfaces';
 
-interface PokemonState {
-    currentPage: number;
-    isLoading: boolean,
-    completeApi: boolean,
-    pokemons: SmallPokemon[]
-}
+// interface PokemonState {
+//     currentPage: number;
+//     isLoading: boolean,
+//     completeApi: boolean,
+//     pokemons: SmallPokemon[]
+// }
 
 
 export default component$(() => {
 
-    const pokemonState = useStore<PokemonState>({
-        currentPage: 0,
-        isLoading: false,
-        completeApi: false,
-        pokemons: []
-    })
+    // const pokemonState = useStore<PokemonState>({
+    //     currentPage: 0,
+    //     isLoading: false,
+    //     completeApi: false,
+    //     pokemons: []
+    // })
+
+    const pokemonState = useContext(PokemonListContext)
+    const nav = useNavigate();
+
+
     // Solo lo ve el Cliente
     // useVisibleTask$(async ({ track }) => {
     //     track(() => pokemonState.currentPage)
@@ -46,6 +51,10 @@ export default component$(() => {
             pokemonState.currentPage++
         }
     }))
+
+    const goPokemon = $((id: number) => {
+        nav(`/pokemon/${id}`)
+    })
     return (
         <>
             <div class="flex flex-col">
@@ -62,7 +71,7 @@ export default component$(() => {
                 {
                     pokemonState.pokemons.map(pokemon =>
                     (
-                        <div key={pokemon.name} class="m-5 flex flex-col justify-center items-center">
+                        <div onClick$={() => goPokemon(pokemon.id)} key={pokemon.name} class="m-5 flex flex-col justify-center items-center">
                             <PokemonImage id={pokemon.id} />
                             <span class="capitalize">{pokemon.name}</span>
                         </div>
